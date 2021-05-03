@@ -1,38 +1,59 @@
-name: C/C++ CI
-
+name: Build C/C++ CI
 on: [workflow_dispatch]
-
 jobs:
-  ubuntu-build:
-    runs-on: ubuntu-latest
+  # ubuntu-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Cache Qt
+  #     id: cache-qt
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: ../Qt
+  #       key: ${{ runner.os }}-QtCache
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@v2
+  #     with:
+  #       cached: ${{ steps.cache-qt.outputs.cache-hit }}
+  #   - name: Dependencies
+  #     run: >
+  #      sudo apt-get install build-essential libboost-dev 
+  #      libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
+  #      libdb++-dev libminiupnpc-dev libleveldb-dev -y
+
+  #   - name: Checkout
+  #     uses: actions/checkout@v2.0.0
+  #   - name: Compile
+  #     run: |
+  #       qmake
+  #       make
+  windows-build:
+    runs-on: windows-latest
     steps:
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
-    - name: Dependencies
-      run: >
-       sudo apt-get install build-essential libboost-dev 
-       libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
-       libdb++-dev libminiupnpc-dev libleveldb-dev -y
-    # - name: leveldb
-    #   run:  |
-    #     sudo apt-get install libsnappy-dev
-    #     wget https://github.com/google/leveldb/archive/1.22.tar.gz leveldb.tar.gz
-    #     tar -zxvf leveldb.tar.gz
-    #     cd leveldb
-    #     mkdir -p build && cd build
-    #     cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+        target: 'desktop'
+        arch: win64_mingw81
+    - name: Download Boost
+      uses: suisei-cn/actions-download-file@v1
+      id: boost  # Remember to give an ID if you need the output
+      with:
+        url: "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.7z"
+    - name: Install Boost
+      run: |
+        7z x boost_1_76_0.7z 
+        cd boost_1_76_0/tools/build
+        ./bootstrap.bat
+        ./b2 --prefix=boost install variant=release address-model=64 link=static,shared
+    # - name: Dependencies
+    #   run: >
+    #    sudo apt-get install build-essential mingw-w64 libboost-dev 
+    #    libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
+    #    libdb++-dev libminiupnpc-dev libleveldb-dev -y 
+
     - name: Checkout
       uses: actions/checkout@v2.0.0
+    - name: QTCompile
+      run: qmake
     - name: Compile
-      run: |
-        ls
-        qmake && make
-  
+      run: make  
