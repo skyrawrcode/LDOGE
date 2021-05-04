@@ -44,7 +44,7 @@ jobs:
         7z x boost_1_76_0.7z 
         cd boost_1_76_0/tools/build
         ./bootstrap.bat
-        ./b2 --prefix=boost install variant=release address-model=64 link=static,shared
+        ./b2 install variant=release address-model=64 link=static,shared
     # - name: Dependencies
     #   run: >
     #    sudo apt-get install build-essential mingw-w64 libboost-dev 
