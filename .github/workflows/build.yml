@@ -40,11 +40,21 @@ jobs:
     - run: |
         choco install nasm --yes --no-progress
         echo "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    # - name: Dependencies
-    #   run: >
-    #    sudo apt-get install build-essential mingw-w64 libboost-dev 
-    #    libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
-    #    libdb++-dev libminiupnpc-dev libleveldb-dev -y 
+    - name: Download miniupnpc
+      uses: suisei-cn/actions-download-file@v1
+      id: miniupnpc_install
+      with: 
+        url: "http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.2.2.tar.gz"
+    - name: Install miniupnpc
+      run: |
+        Get-childitem
+        7z x "miniupnpc-2.2.2.tar.gz"
+        7z x "miniupnpc-2.2.2.tar" -ttar -r
+        cd miniupnpc-2.2.2
+        make libminiupnpc.a
+        mkdir c:/miniupnpc
+        cp *.h c:/miniupnpc/include
+        cp libminiupnpc.a c:/miniupnpc/lib
     - name: Download OpenSSL
       uses: actions/checkout@v2.0.0
       with: 
@@ -53,9 +63,8 @@ jobs:
         path: 'openssl'
     - name: Compile & Install OpenSSL
       run: |
-        echo "$PATH"
         cd openssl
-        perl configure VC-WIN64A --prefix=c:\openssl
+        perl configure VC-WIN64A --prefix=c:/openssl  --openssldir=c:/openssl
         nmake
         nmake install
     - name: "Download Berkely DB"
@@ -77,6 +86,8 @@ jobs:
       id: boost_download  # Remember to give an ID if you need the output
       with:
         url: "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.7z"
+
+
     - name: Install Boost
       id: boost_install
       run: |
@@ -96,6 +107,8 @@ jobs:
        OPENSSL_INCLUDE_PATH='C:\openssl\include'
        BDB_INCLUDE_PATH='c:\bdb\include'
        BDB_LIB_PATH='c:\bdb\lib'
+       MINIUPNPC_INCLUDE_PATH='c:/miniupnpc/include'
+       MINIUPNPC_LIB_PATH='c:/miniupnpc/lib'
     - name: Compile
       run: make  
 
