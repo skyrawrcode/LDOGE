@@ -1,33 +1,33 @@
 name: Build C/C++ CI
 on: [push,workflow_dispatch]
 jobs:
-  # ubuntu-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Cache Qt
-  #     id: cache-qt
-  #     uses: actions/cache@v1
-  #     with:
-  #       path: ../Qt
-  #       key: ${{ runner.os }}-QtCache
-  #   - name: Install Qt
-  #     uses: jurplel/install-qt-action@v2
-  #     with:
-  #       cached: ${{ steps.cache-qt.outputs.cache-hit }}
-  #   - name: Dependencies
-  #     run: >
-  #      sudo apt-get install build-essential libboost-dev 
-  #      libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
-  #      libdb++-dev libminiupnpc-dev libleveldb-dev -y
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Dependencies
+      run: >
+       sudo apt-get install build-essential libboost-dev 
+       libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
+       libdb++-dev libminiupnpc-dev libleveldb-dev -y
 
-  #   - name: Checkout
-  #     uses: actions/checkout@v2.0.0
-  #   - name: Compile
-  #     env:
-  #       RELEASE: 1
-  #     run: |
-  #       qmake
-  #       make
+    - name: Checkout
+      uses: actions/checkout@v2.0.0
+    - name: Compile
+      env:
+        RELEASE: 1
+      run: |
+        qmake
+        make
   windows-build:
     runs-on: windows-latest
     steps:
