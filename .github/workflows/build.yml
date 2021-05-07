@@ -28,6 +28,11 @@ jobs:
       run: |
         qmake
         make
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: litedoge-qt
+        path: litedoge-qt
   windows-build:
     runs-on: windows-latest
     steps:
@@ -112,3 +117,6 @@ jobs:
     - name: Compile
       run: make  
 
+
+
+qmake RELEASE=1 BOOST_INCLUDE_PATH=E:\Projects\vcpkg\installed\x64-windows\include BOOST_LIB_PATH=E:\Projects\vcpkg\installed\x64-windows\lib BOOST_LIB_SUFFIX=-vc140-mt OPENSSL_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib' OPENSSL_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' BDB_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' BDB_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib' MINIUPNPC_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' MINIUPNPC_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib'
