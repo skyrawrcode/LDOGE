@@ -13,6 +13,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
+        version: '5.12.8'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Dependencies
       run: >
@@ -118,5 +119,3 @@ jobs:
       run: make  
 
 
-
-qmake RELEASE=1 BOOST_INCLUDE_PATH=E:\Projects\vcpkg\installed\x64-windows\include BOOST_LIB_PATH=E:\Projects\vcpkg\installed\x64-windows\lib BOOST_LIB_SUFFIX=-vc140-mt OPENSSL_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib' OPENSSL_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' BDB_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' BDB_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib' MINIUPNPC_INCLUDE_PATH='E:\Projects\vcpkg\installed\x64-windows\include' MINIUPNPC_LIB_PATH='E:\Projects\vcpkg\installed\x64-windows\lib'
