@@ -4,17 +4,10 @@ jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
     steps:
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
         version: 5.12.9
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Dependencies
       run: >
        sudo apt-get install build-essential libboost-dev 
