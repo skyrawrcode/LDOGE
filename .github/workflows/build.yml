@@ -26,88 +26,88 @@ jobs:
       with:
         name: litedoge-qt
         path: litedoge-qt
-  windows-build:
-    runs-on: windows-latest
-    steps:
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        target: 'desktop'
-        arch: win64_mingw81
-    - uses: ilammy/msvc-dev-cmd@v1
-    - run: |
-        choco install nasm --yes --no-progress
-        echo "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: Download miniupnpc
-      uses: suisei-cn/actions-download-file@v1
-      id: miniupnpc_install
-      with: 
-        url: "http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.2.2.tar.gz"
-    - name: Install miniupnpc
-      run: |
-        Get-childitem
-        7z x "miniupnpc-2.2.2.tar.gz"
-        7z x "miniupnpc-2.2.2.tar" -ttar -r
-        cd miniupnpc-2.2.2
-        make libminiupnpc.a
-        mkdir c:/miniupnpc
-        cp *.h c:/miniupnpc/include
-        cp libminiupnpc.a c:/miniupnpc/lib
-    - name: Download OpenSSL
-      uses: actions/checkout@v2.0.0
-      with: 
-        repository: 'openssl/openssl'
-        ref: OpenSSL_1_1_1-stable
-        path: 'openssl'
-    - name: Compile & Install OpenSSL
-      run: |
-        cd openssl
-        perl configure VC-WIN64A --prefix=c:/openssl  --openssldir=c:/openssl
-        nmake
-        nmake install
-    - name: "Download Berkely DB"
-      uses: suisei-cn/actions-download-file@v1
-      with:
-        url: "https://download.oracle.com/berkeley-db/db-4.8.30.tar.gz"
-    - name: "Install Berkely DB"
-      run: |
-        7z x "db-4.8.30.tar.gz"
-        7z x "db-4.8.30.tar" -ttar -r
-        cd db-*
-        cd build_windows
-        bash ../dist/configure --disable-replication --enable-mingw --enable-cxx --prefix=c:/bdb --host x86
-        make
-        make install
+  # windows-build:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Install Qt
+  #     uses: jurplel/install-qt-action@v2
+  #     with:
+  #       target: 'desktop'
+  #       arch: win64_mingw81
+  #   - uses: ilammy/msvc-dev-cmd@v1
+  #   - run: |
+  #       choco install nasm --yes --no-progress
+  #       echo "C:\Program Files\NASM" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+  #   - name: Download miniupnpc
+  #     uses: suisei-cn/actions-download-file@v1
+  #     id: miniupnpc_install
+  #     with: 
+  #       url: "http://miniupnp.free.fr/files/download.php?file=miniupnpc-2.2.2.tar.gz"
+  #   - name: Install miniupnpc
+  #     run: |
+  #       Get-childitem
+  #       7z x "miniupnpc-2.2.2.tar.gz"
+  #       7z x "miniupnpc-2.2.2.tar" -ttar -r
+  #       cd miniupnpc-2.2.2
+  #       make libminiupnpc.a
+  #       mkdir c:/miniupnpc
+  #       cp *.h c:/miniupnpc/include
+  #       cp libminiupnpc.a c:/miniupnpc/lib
+  #   - name: Download OpenSSL
+  #     uses: actions/checkout@v2.0.0
+  #     with: 
+  #       repository: 'openssl/openssl'
+  #       ref: OpenSSL_1_1_1-stable
+  #       path: 'openssl'
+  #   - name: Compile & Install OpenSSL
+  #     run: |
+  #       cd openssl
+  #       perl configure VC-WIN64A --prefix=c:/openssl  --openssldir=c:/openssl
+  #       nmake
+  #       nmake install
+  #   - name: "Download Berkely DB"
+  #     uses: suisei-cn/actions-download-file@v1
+  #     with:
+  #       url: "https://download.oracle.com/berkeley-db/db-4.8.30.tar.gz"
+  #   - name: "Install Berkely DB"
+  #     run: |
+  #       7z x "db-4.8.30.tar.gz"
+  #       7z x "db-4.8.30.tar" -ttar -r
+  #       cd db-*
+  #       cd build_windows
+  #       bash ../dist/configure --disable-replication --enable-mingw --enable-cxx --prefix=c:/bdb --host x86
+  #       make
+  #       make install
 
-    - name: Download Boost
-      uses: suisei-cn/actions-download-file@v1
-      id: boost_download  # Remember to give an ID if you need the output
-      with:
-        url: "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.7z"
+  #   - name: Download Boost
+  #     uses: suisei-cn/actions-download-file@v1
+  #     id: boost_download  # Remember to give an ID if you need the output
+  #     with:
+  #       url: "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.7z"
 
 
-    - name: Install Boost
-      id: boost_install
-      run: |
-        7z x boost_1_76_0.7z 
-        cd boost_1_76_0
-        ./bootstrap.bat
-        ./b2 --prefix=C:/boost install variant=release address-model=64 link=static,shared toolset=gcc 
-    - name: Checkout
-      uses: actions/checkout@v2.0.0
-    - name: QTCompile
-      run: >
-       qmake RELEASE=1
-       BOOST_INCLUDE_PATH=C:/boost/include/boost-1_76
-       BOOST_LIB_PATH=C:/boost/lib
-       BOOST_LIB_SUFFIX=-mgw8-mt-x64-1_76
-       OPENSSL_LIB_PATH='C:\openssl\lib'
-       OPENSSL_INCLUDE_PATH='C:\openssl\include'
-       BDB_INCLUDE_PATH='c:\bdb\include'
-       BDB_LIB_PATH='c:\bdb\lib'
-       MINIUPNPC_INCLUDE_PATH='c:/miniupnpc/include'
-       MINIUPNPC_LIB_PATH='c:/miniupnpc/lib'
-    - name: Compile
-      run: make  
+  #   - name: Install Boost
+  #     id: boost_install
+  #     run: |
+  #       7z x boost_1_76_0.7z 
+  #       cd boost_1_76_0
+  #       ./bootstrap.bat
+  #       ./b2 --prefix=C:/boost install variant=release address-model=64 link=static,shared toolset=gcc 
+  #   - name: Checkout
+  #     uses: actions/checkout@v2.0.0
+  #   - name: QTCompile
+  #     run: >
+  #      qmake RELEASE=1
+  #      BOOST_INCLUDE_PATH=C:/boost/include/boost-1_76
+  #      BOOST_LIB_PATH=C:/boost/lib
+  #      BOOST_LIB_SUFFIX=-mgw8-mt-x64-1_76
+  #      OPENSSL_LIB_PATH='C:\openssl\lib'
+  #      OPENSSL_INCLUDE_PATH='C:\openssl\include'
+  #      BDB_INCLUDE_PATH='c:\bdb\include'
+  #      BDB_LIB_PATH='c:\bdb\lib'
+  #      MINIUPNPC_INCLUDE_PATH='c:/miniupnpc/include'
+  #      MINIUPNPC_LIB_PATH='c:/miniupnpc/lib'
+  #   - name: Compile
+  #     run: make  
 
 
