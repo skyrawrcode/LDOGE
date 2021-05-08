@@ -7,13 +7,12 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: 5.12.9
+        version: 5.12.8
     - name: Dependencies
       run: >
        sudo apt-get install build-essential libboost-dev 
        libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
        libdb++-dev libminiupnpc-dev libleveldb-dev -y
-
     - name: Checkout
       uses: actions/checkout@v2.0.0
     - name: Compile
