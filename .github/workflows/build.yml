@@ -4,14 +4,15 @@ jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
     steps:
-    - name: Environment
-      run: |
-        gcc --version
-        qtchooser -l
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
         version: 5.12.8
+    - name: Environment
+      run: |
+        gcc --version
+        qtchooser -l
     - name: Dependencies
       run: >
        sudo apt-get install build-essential libboost-dev 
