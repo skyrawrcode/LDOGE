@@ -4,6 +4,9 @@ jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
     steps:
+    - name: Environment
+      run: |
+        gcc --version
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
