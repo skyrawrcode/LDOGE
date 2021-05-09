@@ -12,7 +12,7 @@ jobs:
     - name: Environment
       run: |
         gcc --version
-        qtchooser -l
+        qmake -v
     - name: Dependencies
       run: >
        sudo apt-get install build-essential libboost-dev 
