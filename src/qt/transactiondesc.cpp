@@ -8,7 +8,7 @@
 #include "paymentserver.h"
 #include "transactionrecord.h"
 #include "timedata.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "wallet.h"
 #include "txdb.h"
 

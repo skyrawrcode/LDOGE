@@ -17,7 +17,7 @@
 #include "net.h"
 #include "txdb.h"
 #include "txmempool.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 
 using namespace std;
 using namespace boost;

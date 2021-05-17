@@ -6,15 +6,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui REQUIRED)
+find_package(OpenSSL REQUIRED)
 
-set_property(SOURCE /src/ui_interface.h PROPERTY SKIP_AUTOUIC ON)
-set_property(SOURCE src/ui_interface.h PROPERTY SKIP_AUTOUIC ON)
-set_property(SOURCE ui_interface.h PROPERTY SKIP_AUTOUIC ON)
-
-include_directories(
-    ${CMAKE_BINARY_DIR}/lib
-    ${CMAKE_BINARY_DIR}/include
-)
+set(CMAKE_AUTOUIC_SEARCH_PATHS src/qt/forms)
 
 set(SOURCES 
     src/qt/bitcoin.cpp 
@@ -134,5 +128,7 @@ target_link_libraries(litedoge-qt PUBLIC
     Qt5::Network
     Qt5::DBus
     Qt5::Gui
+    OpenSSL::SSL
+    OpenSSL::Crypto
     leveldb
 )

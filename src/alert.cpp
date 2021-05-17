@@ -8,7 +8,7 @@
 #include "key.h"
 #include "net.h"
 #include "timedata.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "util.h"
 
 #include <stdint.h>

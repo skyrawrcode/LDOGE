@@ -10,7 +10,7 @@
 #include "rpcserver.h"
 #include "net.h"
 #include "util.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "checkpoints.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"

@@ -8,7 +8,7 @@
 #include "net.h"
 #include "main.h"
 #include "addrman.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 
 #ifdef WIN32
 #include <string.h>

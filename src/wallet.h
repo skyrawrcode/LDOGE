@@ -17,7 +17,7 @@
 #include "key.h"
 #include "keystore.h"
 #include "script.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "util.h"
 
 // Settings

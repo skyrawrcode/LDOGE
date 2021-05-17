@@ -31,7 +31,7 @@
 #include "rpcconsole.h"
 #include "wallet.h"
 #include "init.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 
 
 #ifdef Q_OS_MAC
@@ -966,7 +966,7 @@ void BitcoinGUI::encryptWallet()
 
 void BitcoinGUI::backupWallet()
 {
-    QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
     if(!filename.isEmpty()) {
         if(!walletModel->backupWallet(filename)) {

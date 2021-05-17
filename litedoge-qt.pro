@@ -197,7 +197,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/notificator.h \
     src/qt/paymentserver.h \
     src/allocators.h \
-    src/ui_interface.h \
+    src/uiinterface.h \
     src/qt/rpcconsole.h \
     src/version.h \
     src/netbase.h \

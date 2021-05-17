@@ -7,7 +7,7 @@
 
 #include "chainparams.h"
 #include "sync.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "uint256.h"
 #include "version.h"
 

@@ -11,7 +11,7 @@
 #include "net.h"
 #include "timedata.h"
 #include "txdb.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #include "walletdb.h"
 
 #include <boost/algorithm/string/replace.hpp>

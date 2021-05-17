@@ -11,7 +11,7 @@
 #include "sync.h"
 #include "base58.h"
 #include "db.h"
-#include "ui_interface.h"
+#include "uiinterface.h"
 #ifdef ENABLE_WALLET
 #include "wallet.h"
 #endif
