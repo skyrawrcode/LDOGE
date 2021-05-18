@@ -7,6 +7,8 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(Boost 1.67 COMPONENTS system filesystem program_options thread chrono)
+find_package(BerkeleyDB REQUIRED) 
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS src/qt/forms)
 
@@ -110,11 +112,8 @@ set(RESOURCES
     src/qt/bitcoin.qrc
 )
 
-# qt5_wrap_ui(FORMS ${FORMS})
 
-
-
-include_directories(src src/json src/qt src/qt/forms)
+include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS} ${})
 
 add_subdirectory(src/leveldb)
 
@@ -131,4 +130,6 @@ target_link_libraries(litedoge-qt PUBLIC
     OpenSSL::SSL
     OpenSSL::Crypto
     leveldb
+    ${Boost_LIBRARIES}
+    ${BDB_LIBRARY}
 )
