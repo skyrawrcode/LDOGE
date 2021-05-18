@@ -4,6 +4,16 @@ project(litedoge-qt)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+# set(BUILD_SHARED_LIBS OFF)
+# set(CMAKE_EXE_LINKER_FLAGS "-static")
+
+add_compile_definitions(ENABLE_WALLET )
+add_compile_definitions(BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS)
+
+
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -91,6 +101,7 @@ set(SOURCES
     src/scrypt.cpp 
     src/pbkdf2.cpp 
     src/qt/autosaver.cpp
+    src/txdb-leveldb.cpp
 )
 
 set(FORMS 
@@ -113,8 +124,8 @@ set(RESOURCES
 )
 
 
-include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS} ${})
-
+include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
+include_directories(src/leveldb/include src/leveldb/helpers)
 add_subdirectory(src/leveldb)
 
 add_executable(litedoge-qt ${FORMS} ${RESOURCES} ${SOURCES} )
@@ -131,5 +142,6 @@ target_link_libraries(litedoge-qt PUBLIC
     OpenSSL::Crypto
     leveldb
     ${Boost_LIBRARIES}
-    ${BDB_LIBRARY}
+    Oracle::BerkeleyDB
+    # "-static"
 )
