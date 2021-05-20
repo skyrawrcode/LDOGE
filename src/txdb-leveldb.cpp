@@ -154,13 +154,18 @@ bool CTxDB::TxnCommit()
 }
 
 class CBatchScanner : public leveldb::WriteBatch::Handler {
-public:
+    public:
     std::string needle;
     bool *deleted;
     std::string *foundValue;
     bool foundEntry;
 
     CBatchScanner() : foundEntry(false) {}
+
+    virtual ~CBatchScanner(){
+
+    }
+
 
     virtual void Put(const leveldb::Slice& key, const leveldb::Slice& value) {
         if (key.ToString() == needle) {
@@ -178,6 +183,10 @@ public:
     }
 };
 
+leveldb::WriteBatch::Handler::~Handler(){
+
+}
+
 // When performing a read, if we have an active batch we need to check it first
 // before reading from the database, as the rest of the code assumes that once
 // a database transaction begins reads are consistent with it. It would be good
@@ -187,6 +196,8 @@ bool CTxDB::ScanBatch(const CDataStream &key, string *value, bool *deleted) cons
     assert(activeBatch);
     *deleted = false;
     CBatchScanner scanner;
+
+    //todo:: fix this because it's annoying.
     scanner.needle = key.str();
     scanner.deleted = deleted;
     scanner.foundValue = value;
@@ -195,6 +206,7 @@ bool CTxDB::ScanBatch(const CDataStream &key, string *value, bool *deleted) cons
         throw runtime_error(status.ToString());
     }
     return scanner.foundEntry;
+    return 0;
 }
 
 bool CTxDB::ReadTxIndex(uint256 hash, CTxIndex& txindex)
