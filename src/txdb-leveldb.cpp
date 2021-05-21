@@ -12,7 +12,6 @@
 #include <leveldb/env.h>
 #include <leveldb/cache.h>
 #include <leveldb/filter_policy.h>
-#include <memenv/memenv.h>
 
 #include "kernel.h"
 #include "checkpoints.h"
@@ -183,9 +182,6 @@ class CBatchScanner : public leveldb::WriteBatch::Handler {
     }
 };
 
-leveldb::WriteBatch::Handler::~Handler(){
-
-}
 
 // When performing a read, if we have an active batch we need to check it first
 // before reading from the database, as the rest of the code assumes that once
@@ -196,8 +192,6 @@ bool CTxDB::ScanBatch(const CDataStream &key, string *value, bool *deleted) cons
     assert(activeBatch);
     *deleted = false;
     CBatchScanner scanner;
-
-    //todo:: fix this because it's annoying.
     scanner.needle = key.str();
     scanner.deleted = deleted;
     scanner.foundValue = value;

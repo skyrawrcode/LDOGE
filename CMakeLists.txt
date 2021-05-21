@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(litedoge-qt)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
 set(BUILD_SHARED_LIBS ON)
-# set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 
 add_compile_definitions(ENABLE_WALLET )
 add_compile_definitions(BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS)
@@ -125,12 +127,9 @@ set(RESOURCES
 
 
 include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
-include_directories(src/leveldb/include src/leveldb/helpers)
-add_subdirectory(src/leveldb)
 
+add_subdirectory(external/leveldb)
 add_executable(litedoge-qt ${FORMS} ${RESOURCES} ${SOURCES} )
-add_dependencies(litedoge-qt leveldb)
-
 
 target_link_libraries(litedoge-qt PUBLIC
     Qt5::Core
