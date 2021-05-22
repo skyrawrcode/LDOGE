@@ -105,6 +105,9 @@ inline void MilliSleep(int64_t n)
 #endif
 }
 
+#ifdef _MSC_VER 
+#define __PRETTY_FUNCTION__ __FUNCSIG__ 
+#endif
 
 
 extern std::map<std::string, std::string> mapArgs;

@@ -1,19 +1,28 @@
 cmake_minimum_required(VERSION 3.16)
-project(litedoge-qt)
-
 set(CMAKE_CXX_STANDARD 11)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+project(litedoge-qt)
 
 set(BUILD_SHARED_LIBS ON)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wreorder -Wa,-mbig-obj -O2 -static")
+endif()
+if(MSVC)
+    message("Adding Big OBJ arguments")
+    add_compile_options(/bigobj)
+endif()
 
 
 add_compile_definitions(ENABLE_WALLET )
 add_compile_definitions(BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 
+set(Boost_USE_STATIC_LIBS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -21,6 +30,32 @@ find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Boost 1.67 COMPONENTS system filesystem program_options thread chrono)
 find_package(BerkeleyDB REQUIRED) 
+
+# use: qmake "USE_UPNP=1" ( enabled by default; default)
+#  or: qmake "USE_UPNP=0" (disabled by default)
+#  or: qmake "USE_UPNP=-" (not supported)
+# miniupnpc (http://miniupnp.free.fr/files/) must be installed for support
+# contains(USE_UPNP, -) {
+#     message(Building without UPNP support)
+# } else {
+#     message(Building with UPNP support)
+#     count(USE_UPNP, 0) {
+#         USE_UPNP=1
+#     }
+#     DEFINES += USE_UPNP=$$USE_UPNP STATICLIB
+#     INCLUDEPATH += $$MINIUPNPC_INCLUDE_PATH
+#     LIBS += $$join(MINIUPNPC_LIB_PATH,,-L,) -lminiupnpc
+#     win32:LIBS += -liphlpapi
+# }
+
+# use: qmake "USE_QRCODE=1"
+# libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
+# contains(USE_QRCODE, 1) {
+#     message(Building with QRCode support)
+#     DEFINES += USE_QRCODE=$$USE_QRCODE
+#     INCLUDEPATH += $$QRENCODE_INCLUDE_PATH
+#     LIBS += $$join(QRENCODE_LIB_PATH,,-L,) -lqrencode
+# }
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS src/qt/forms)
 
@@ -131,8 +166,7 @@ include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
 add_subdirectory(external/leveldb)
 add_executable(litedoge-qt ${FORMS} ${RESOURCES} ${SOURCES} )
 
-target_link_libraries(litedoge-qt PUBLIC
-    Qt5::Core
+set(EXTERNAL_LIBRARIES  Qt5::Core
     Qt5::Widgets
     Qt5::Network
     Qt5::DBus
@@ -141,6 +175,15 @@ target_link_libraries(litedoge-qt PUBLIC
     OpenSSL::Crypto
     leveldb
     ${Boost_LIBRARIES}
-    Oracle::BerkeleyDB
+    Oracle::BerkeleyDB)
+
+if (MSVC)
+    set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} Shlwapi.lib)
+endif()
+    
+target_link_libraries(litedoge-qt PUBLIC
+    ${EXTERNAL_LIBRARIES}
     # "-static"
 )
+
+
