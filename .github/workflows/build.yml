@@ -62,7 +62,12 @@ jobs:
           ninja --version
           cmake --version
           gcc --version
-          ${{ env.VCPKG_INSTALLATION_ROOT }}/vcpkg update
+      - name: VCPKG updates
+        if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
+        run: | 
+          cd {{env.VCPKG_INSTALLATION_ROOT}} 
+          git pull
+          vcpkg update
       - name: Install dependencies on macos
         if: startsWith(matrix.config.os, 'macos')
         run: |
