@@ -3,27 +3,80 @@ name: C/C++ CI
 on: [pull_request,workflow_dispatch]
 
 jobs:
-  ubuntu-build:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
-        qt-version: [5.12.8, 5.15.2]
-    runs-on: ubuntu-latest
+        config: 
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            artifact: "windows_msvc.7z",
+            build_type: "Release",
+            cc: "cl",
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019"
+          }
+        - {
+            name: "Ubuntu_Latest_GCC",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc.7z",
+            build_type: "Release",
+            cc: "gcc",
+            cxx: "g++",
+            archiver: "7z a",
+            generators: "Ninja"
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            artifact: "macos_clang.7z",
+            build_type: "Release",
+            cc: "clang",
+            cxx: "clang++",
+            archiver: "7za a",
+            generators: "Ninja"
+          }
     steps:
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: ${{ matrix.qt-version }}
-    - name: Dependencies
-      run: >
-       sudo apt-get install build-essential libboost-dev libboost-all-dev libssl-dev
-       libdb++-dev libminiupnpc-dev libleveldb-dev -y
-    - name: Checkout
-      uses: actions/checkout@v2.0.0
-    - name: QMake
-      run: qmake RELEASE=1
-    - name: Make
-      run: make
-    - uses: actions/upload-artifact@v2
-      with:
-        name: litedoge-qt
-        path: litedoge-qt
+      - name: Install dependencies on windows
+        if: startsWith(matrix.config.os, 'windows')
+        run: |
+          choco install ninja cmake
+          ninja --version
+          cmake --version
+        # cmd "${{ matrix.config.environment_script }}"
+      - name: Install dependencies on ubuntu
+        if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build cmake -y
+          ninja --version
+          cmake --version
+          gcc --version
+      - name: Install dependencies on macos
+        if: startsWith(matrix.config.os, 'macos')
+        run: |
+          brew install p7zip cmake ninja
+          ninja --version
+          cmake --version
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - name: CMake
+        run: |
+          mkdir build
+          mkdir instdir
+          ninja --version
+          cmake -S . -B . \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake \
+            -G "${{ matrix.config.generators }}" \
+            -DCMAKE_INSTALL_PREFIX:PATH=instdir
+      - name: Make
+        run: make
+      - uses: actions/upload-artifact@v2
+        with:
+          name: litedoge-qt
+          path: litedoge-qt

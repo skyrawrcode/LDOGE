@@ -5,12 +5,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+
+
 project(litedoge-qt)
 
-set(BUILD_SHARED_LIBS ON)
+message("Compiler: ${CMAKE_CXX_COMPILER_ID}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wreorder -Wa,-mbig-obj -O2 -static")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wreorder -O2 ")
 endif()
 if(MSVC)
     message("Adding Big OBJ arguments")
@@ -22,7 +24,7 @@ add_compile_definitions(ENABLE_WALLET )
 add_compile_definitions(BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 
-set(Boost_USE_STATIC_LIBS ON)
+# set(Boost_USE_STATIC_LIBS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
