@@ -3,7 +3,6 @@
     "version-string": "3.5.0.1",
     "dependencies": [
         "openssl",
-        "berkeleydb",
         "boost-system",
         "boost-foreach",
         "boost-signals2",
@@ -17,7 +16,10 @@
         "boost-bind",
         "boost-interprocess",
         "boost-ublas",
-        "qt5"
-
+        "qt5",
+        {
+            "name": "berkeleydb",
+            "platform": "windows"
+        }
     ]
   }
