@@ -65,7 +65,7 @@ jobs:
       - name: VCPKG updates
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: | 
-          cd {{env.VCPKG_INSTALLATION_ROOT}} 
+          cd ${{env.VCPKG_INSTALLATION_ROOT}} 
           git pull
           vcpkg update
       - name: Install dependencies on macos
