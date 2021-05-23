@@ -58,7 +58,7 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential cmake ninja-build libdb++-dev gperf autoconf libtool freetype-devel libxml2-devel -y
+          sudo apt-get install build-essential cmake ninja-build libdb++-dev gperf autoconf libtool libx11-dev -y
           ninja --version
           cmake --version
           gcc --version
