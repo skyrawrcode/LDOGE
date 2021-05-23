@@ -7,7 +7,7 @@ jobs:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     env:
-      VCPKG_INSTALLATION_ROOT: /usr/local/share/vcpkg
+      VCPKG_INSTALLATION_ROOT: ${{ matrix.config.vcpkg_root }}
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,8 @@ jobs:
             cc: "cl",
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            archiver: "7z a"
+            archiver: "7z a",
+            vcpkg_root: "C:/vcpkg"
             # generators: "Visual Studio 16 2019"
           }
         - {
@@ -30,7 +31,8 @@ jobs:
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
-            archiver: "7z a"
+            archiver: "7z a",
+            vcpkg_root: "/usr/local/share/vcpkg"
             # generators: "Ninja"
           }
         - {
@@ -41,7 +43,8 @@ jobs:
             cc: "clang",
             cxx: "clang++",
             archiver: "7za a",
-            generators: "Ninja"
+            generators: "Ninja",
+            vcpkg_root: "/usr/local/share/vcpkg"
           }
     steps:
       - name: Install dependencies on windows
@@ -55,7 +58,7 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential cmake ninja-build libdb++-dev -y
+          sudo apt-get install build-essential cmake ninja-build libdb++-dev gperf -y
           ninja --version
           cmake --version
           gcc --version
@@ -71,15 +74,11 @@ jobs:
         run: |
           mkdir build
           mkdir instdir
-          ninja --version
-          echo ${{env.VCPKG_INSTALLATION_ROOT}}
           cmake -S . -B . -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX:PATH=instdir
       - name: Build
         run: cmake --build . --config ${{ matrix.config.build_type }}
-
       - name: Install Strip
         run: cmake --install . --strip
-
       - name: Pack
         shell: bash
         working-directory: instdir
