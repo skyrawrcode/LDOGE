@@ -58,21 +58,14 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential cmake ninja-build libdb++-dev gperf fontconfig-config -y
+          sudo apt-get install build-essential cmake ninja-build libdb++-dev gperf autoconf libtool -y
           ninja --version
           cmake --version
           gcc --version
-      - name: VCPKG updates
-        if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
-        run: | 
-          cd ${{env.VCPKG_INSTALLATION_ROOT}} 
-          git fetch --all
-          git reset --hard origin/master
-          vcpkg update
       - name: Install dependencies on macos
         if: startsWith(matrix.config.os, 'macos')
         run: |
-          brew install p7zip cmake ninja
+          brew install p7zip cmake ninja autoconf
           ninja --version
           cmake --version
       - name: Checkout
