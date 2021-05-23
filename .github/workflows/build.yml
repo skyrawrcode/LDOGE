@@ -1,12 +1,15 @@
 name: C/C++ CI
 
-on: [pull_request,workflow_dispatch]
+on: [push,pull_request,workflow_dispatch]
 
 jobs:
   build:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    env:
+      VCPKG_INSTALLATION_ROOT: /usr/local/share/vcpkg
     strategy:
+      fail-fast: false
       matrix:
         config: 
         - {
@@ -17,8 +20,8 @@ jobs:
             cc: "cl",
             cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            archiver: "7z a",
-            generators: "Visual Studio 16 2019"
+            archiver: "7z a"
+            # generators: "Visual Studio 16 2019"
           }
         - {
             name: "Ubuntu_Latest_GCC",
@@ -27,8 +30,8 @@ jobs:
             build_type: "Release",
             cc: "gcc",
             cxx: "g++",
-            archiver: "7z a",
-            generators: "Ninja"
+            archiver: "7z a"
+            # generators: "Ninja"
           }
         - {
             name: "macOS Latest Clang",
@@ -52,7 +55,7 @@ jobs:
         if: startsWith(matrix.config.name, 'Ubuntu_Latest_GCC')
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build cmake -y
+          sudo apt-get install build-essential cmake ninja-build libdb++-dev -y
           ninja --version
           cmake --version
           gcc --version
@@ -69,10 +72,10 @@ jobs:
           mkdir build
           mkdir instdir
           ninja --version
+          echo ${{env.VCPKG_INSTALLATION_ROOT}}
           cmake -S . -B . \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_TOOLCHAIN_FILE=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake \
-            -G "${{ matrix.config.generators }}" \
             -DCMAKE_INSTALL_PREFIX:PATH=instdir
       - name: Make
         run: make
