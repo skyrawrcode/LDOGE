@@ -34,3 +34,9 @@ src/leveldb/leveldb_autogen/mocs_compilation.cpp
 src/leveldb/leveldbConfigVersion.cmake
 
 src/leveldb/libleveldb.a
+
+CMakeLists.txt.user
+
+.vs/
+
+CMakeSettings.json
