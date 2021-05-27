@@ -1,25 +1,26 @@
 {
     "name": "litedoge",
     "version-string": "3.5.0.1",
-    "dependencies": [
-        "openssl",
-        "boost-system",
-        "boost-foreach",
-        "boost-signals2",
-        "boost-filesystem",
-        "boost-program-options",
-        "boost-thread",
-        "boost-chrono",
-        "boost-assign",
-        "boost-iostreams",
-        "boost-asio",
-        "boost-bind",
-        "boost-interprocess",
-        "boost-ublas",
-        "qt5",
-        {
-            "name": "berkeleydb",
-            "platform": "windows"
-        }
-    ]
+  "dependencies": [
+    "openssl",
+    "boost-system",
+    "boost-foreach",
+    "boost-signals2",
+    "boost-filesystem",
+    "boost-program-options",
+    "boost-thread",
+    "boost-chrono",
+    "boost-assign",
+    "boost-iostreams",
+    "boost-asio",
+    "boost-bind",
+    "boost-interprocess",
+    "boost-ublas",
+    "miniupnpc",
+    "qt5",
+    {
+      "name": "berkeleydb",
+      "platform": "windows"
+    }
+  ]
   }

@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(litedoge-qt)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 
-project(litedoge-qt)
 
 message("Compiler: ${CMAKE_CXX_COMPILER_ID}")
 
@@ -158,15 +159,21 @@ set(FORMS
     src/qt/forms/optionsdialog.ui
 )
 
-set(RESOURCES 
+qt5_add_resources(RESOURCES 
     src/qt/bitcoin.qrc
 )
 
 
 include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
 
+set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "Build LevelDB's unit tests")
+set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL  "Build LevelDB's benchmarks" )
 add_subdirectory(external/leveldb)
-add_executable(litedoge-qt ${FORMS} ${RESOURCES} ${SOURCES} )
+target_compile_options(leveldb PRIVATE /MT)
+target_link_options(leveldb PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
+target_compile_options(leveldbutil PRIVATE /MT)
+target_link_options(leveldbutil PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
+add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${SOURCES} )
 
 set(EXTERNAL_LIBRARIES  Qt5::Core
     Qt5::Widgets
@@ -183,9 +190,10 @@ if (MSVC)
     set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} Shlwapi.lib)
 endif()
     
-target_link_libraries(litedoge-qt PUBLIC
+target_link_libraries(litedoge-qt PRIVATE
     ${EXTERNAL_LIBRARIES}
     # "-static"
 )
 
-
+target_compile_options(litedoge-qt PRIVATE /MT)
+target_link_options(litedoge-qt PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
