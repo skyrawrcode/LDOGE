@@ -1,16 +1,19 @@
-cmake_minimum_required(VERSION 3.16)
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(litedoge-qt)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-
-
-message("Compiler: ${CMAKE_CXX_COMPILER_ID}")
+option(USE_DBUS "Build with DBUS (Freedesktop notifications) support" ON)
+option(ENABLE_UPNP "Enable UPnP support" ON)
+option(START_WITH_UPNP "Make UPnP the default to map ports" OFF)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Wreorder -O2 ")
@@ -24,15 +27,20 @@ endif()
 add_compile_definitions(ENABLE_WALLET )
 add_compile_definitions(BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
+if(USE_DBUS)
+    message("Building with DBUS (Freedesktop notifications) support")
+    add_compile_definitions(USE_DBUS)
+endif()
 
 # set(Boost_USE_STATIC_LIBS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
-find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Network DBus Gui LinguistTools REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Boost 1.67 COMPONENTS system filesystem program_options thread chrono)
 find_package(BerkeleyDB REQUIRED) 
+
 
 # use: qmake "USE_UPNP=1" ( enabled by default; default)
 #  or: qmake "USE_UPNP=0" (disabled by default)
@@ -159,21 +167,24 @@ set(FORMS
     src/qt/forms/optionsdialog.ui
 )
 
-qt5_add_resources(RESOURCES 
-    src/qt/bitcoin.qrc
-)
+file(GLOB TRANSLATIONS_RAW CONFIGURE_DEPENDS src/qt/locale/bitcoin_*.ts )
 
+qt5_add_translation(QM_FILES ${TRANSLATIONS_RAW})
+qt5_add_resources(QT_RESOURCES src/qt/bitcoin.qrc )
+
+set(RESOURCES src/qt/res/bitcoin-qt.rc)
 
 include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
 
 set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "Build LevelDB's unit tests")
 set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL  "Build LevelDB's benchmarks" )
 add_subdirectory(external/leveldb)
-target_compile_options(leveldb PRIVATE /MT)
+target_compile_options(leveldb PRIVATE /MTd)
 target_link_options(leveldb PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
-target_compile_options(leveldbutil PRIVATE /MT)
+target_compile_options(leveldbutil PRIVATE /MTd)
 target_link_options(leveldbutil PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
-add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${SOURCES} )
+
+add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${QT_RESOURCES} ${SOURCES} ${QM_FILES}  )
 
 set(EXTERNAL_LIBRARIES  Qt5::Core
     Qt5::Widgets
@@ -192,8 +203,7 @@ endif()
     
 target_link_libraries(litedoge-qt PRIVATE
     ${EXTERNAL_LIBRARIES}
-    # "-static"
 )
 
-target_compile_options(litedoge-qt PRIVATE /MT)
+target_compile_options(litedoge-qt PRIVATE /MTd)
 target_link_options(litedoge-qt PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
