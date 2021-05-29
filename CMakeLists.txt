@@ -1,15 +1,20 @@
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(litedoge-qt)
 
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+
+include(CheckPIESupported)
+check_pie_supported()
+
 
 option(USE_DBUS "Build with DBUS (Freedesktop notifications) support" ON)
 option(ENABLE_UPNP "Enable UPnP support" ON)
@@ -20,6 +25,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" 
 endif()
 if(MSVC)
     message("Adding Big OBJ arguments")
+    
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     add_compile_options(/bigobj)
 endif()
 
@@ -178,13 +185,10 @@ include_directories(src src/json src/qt src/qt/forms ${Boost_INCLUDE_DIRS})
 
 set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "Build LevelDB's unit tests")
 set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL  "Build LevelDB's benchmarks" )
-add_subdirectory(external/leveldb)
-target_compile_options(leveldb PRIVATE /MTd)
-target_link_options(leveldb PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
-target_compile_options(leveldbutil PRIVATE /MTd)
-target_link_options(leveldbutil PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
+add_subdirectory(external/leveldb EXCLUDE_FROM_ALL)
 
 add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${QT_RESOURCES} ${SOURCES} ${QM_FILES}  )
+set_property(TARGET litedoge-qt PROPERTY POSITION_INDEPENDENT_CODE FALSE)
 
 set(EXTERNAL_LIBRARIES  Qt5::Core
     Qt5::Widgets
@@ -204,6 +208,3 @@ endif()
 target_link_libraries(litedoge-qt PRIVATE
     ${EXTERNAL_LIBRARIES}
 )
-
-target_compile_options(litedoge-qt PRIVATE /MTd)
-target_link_options(litedoge-qt PRIVATE /INCREMENTAL:NO /NODEFAULTLIB:MSVCRT)
