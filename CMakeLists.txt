@@ -174,10 +174,11 @@ set(FORMS
     src/qt/forms/optionsdialog.ui
 )
 
-file(GLOB TRANSLATIONS_RAW CONFIGURE_DEPENDS src/qt/locale/bitcoin_*.ts )
-
+message("Adding Translations")
+file(GLOB TRANSLATIONS_RAW CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/qt/locale/bitcoin_*.ts )
+set_source_files_properties(${TRANSLATIONS_RAW} PROPERTIES OUTPUT_LOCATION ${CMAKE_SOURCE_DIR}/src/qt/locale)
 qt5_add_translation(QM_FILES ${TRANSLATIONS_RAW})
-qt5_add_resources(QT_RESOURCES src/qt/bitcoin.qrc )
+qt5_add_resources(QT_RESOURCES src/qt/bitcoin.qrc)
 
 set(RESOURCES src/qt/res/bitcoin-qt.rc)
 
@@ -187,7 +188,7 @@ set(LEVELDB_BUILD_TESTS OFF CACHE BOOL "Build LevelDB's unit tests")
 set(LEVELDB_BUILD_BENCHMARKS OFF CACHE BOOL  "Build LevelDB's benchmarks" )
 add_subdirectory(external/leveldb EXCLUDE_FROM_ALL)
 
-add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${QT_RESOURCES} ${SOURCES} ${QM_FILES}  )
+add_executable(litedoge-qt WIN32 ${FORMS} ${RESOURCES} ${QT_RESOURCES} ${SOURCES})
 set_property(TARGET litedoge-qt PROPERTY POSITION_INDEPENDENT_CODE FALSE)
 
 set(EXTERNAL_LIBRARIES  Qt5::Core
